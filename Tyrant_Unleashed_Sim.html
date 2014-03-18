@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title> Tyrant Unleashed - simulator and optimiser </title>
+		<style>
+ 			#block
+			{
+				width: 100%;
+   				color: navy;
+   				background-color: lightgrey;
+   				border: 2px solid darkblue;
+  				padding: 5px;
+				line-height:150%;
+				float:left;
+			}
+			#block2
+			{
+				width: 100%;
+   				color: navy;
+   				background-color: lightgrey;
+   				border: 2px solid darkblue;
+  				padding: 5px;
+				line-height:150%;
+				float:left;
+			}
+			#left1
+			{
+				display:inline-block;
+				float:left;
+				width: 45%;
+				min-width: 175px;
+			}
+			#left2
+			{
+				display:inline-block;
+				padding-left: 1%;
+				width: 54%;
+			}
+			#left3
+			{
+				display:inline-block;
+				float:left;
+				
+				min-width: 315px;
+				width: 30%;
+
+			}
+			#left4
+			{
+				display:inline-block;
+
+				padding-left : 1%;
+				width: 69%;
+
+				
+			}
+
+			.center
+			{
+				margin:auto;
+				width:50%;
+			}
+			
+</style>
+
+
+<script src="Tyrant.js"></script>
+<script src="Tyrantcardlist.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="jquery.sortable.js"></script>
+
+	</head>
+	<body>
+
+		<header class="center">
+			<img src="Tyrant_logo.png" >
+		</header>
+		<div id="block">
+			<div id="left1">
+			<h2> Your Collection </h2>
+			<form name="addCard" action="" autocomplete="on">
+ 			Card name:<input list="fulllist" name="fname">
+
+  			<input type="button" name="addCardbutton" onClick="AddCollection(this.form, Cardlist)" value ="Add Card to Collection">
+			</form>
+			<button onclick="showCollection(Cardlist)">Show/Hide Collection</button>
+			<button onclick="CleanDeckList(Cardlist)">Clean saved data</button>
+
+			<script type="text/javascript">
+			document.write('<div><label><input type="checkbox" id="toggle" defaultChecked=true>Use your Collection for autocompletion in Player\'s deck.</label></div>');
+			document.getElementById('toggle').checked = true;
+			document.getElementById('toggle').onclick = function () 
+				{
+					if ( document.getElementById('toggle').checked )
+					{
+						if (localStorage.collection)
+						{
+							var options = "";
+							var collectionArray = localStorage.collection.split(",");
+							for (var i=0 ; i< collectionArray.length ; i++)
+							{
+								options += '<option value="'+Cardlist[collectionArray[i]].CardName +'">';
+							}
+							document.getElementById('collectionlist').innerHTML = options;
+						}
+					}
+					else
+					{
+						var options = "";
+						for (var i=0 ; i< Cardlist.length ; i++)
+						{
+							options += '<option value="'+Cardlist[i].CardName +'">';
+						}
+						document.getElementById('collectionlist').innerHTML = options;
+					}					
+				}
+			</script>
+			
+			</div >	
+			<div id="left2"> 
+			<h2>Filters</h2>
+			<form id="filtering">
+			Faction:<select name="factions">
+			<option value="NA">Not important</option>
+			<option value="Imperial">Imperial</option>
+			<option value="Raider">Raider</option>
+			<option value="Bloodthirsty">Bloodthirsty</option>
+			<option value="Xeno">Xeno</option>
+			<option value="Righteous">Righteous</option>
+			<option value="Progenitor">Progenitor</option>
+			</select><br>
+			<div id="skillList"></div>
+			
+			Att min:<input type="number" name="attackMin" value=0><br>
+			Helth min: <input type="number" name="healthMin" value=1><br>
+			<input type="button" onclick="filters(this.form, Cardlist)" value="Apply Filters">
+			</form>
+
+			</div>
+			<div id="collectionList"></div>			
+		</div>
+		
+		<div id ="block2">
+			<div id="left3" >
+			<h2> Simulation </h2>
+			<form name="EnterDecks" action="" autocomplete="on">
+			<table border=1 style="width:100%">
+				<tr>
+					<td>Name of your deck</td>
+					<td>Name of your opponent deck</td>
+ 				</tr>
+				<tr>
+					<td><input list="decklist" name="playerDeck"></td>
+					<td><input list="decklist" name="enemyDeck"></td>
+ 				</tr>
+				<tr>
+					<td>COMMANDER</td>
+					<td>COMMANDER</td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard0" id="playerCard0"></td>
+					<td><input list="fulllist" name="enemyCard0"></td>
+ 				</tr>
+				<tr>
+					<td>CARDS</td>
+					<td>CARDS</td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name ="playerCard1" id="playerCard1"></td>
+					<td><input list="fulllist" name="enemyCard1"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard2" id="playerCard2"></td>
+					<td><input list="fulllist" name="enemyCard2"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard3" id="playerCard3"></td>
+					<td><input list="fulllist" name="enemyCard3"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard4" id="playerCard4"></td>
+					<td><input list="fulllist" name="enemyCard4"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard5" id="playerCard5"></td>
+					<td><input list="fulllist" name="enemyCard5"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard6" id="playerCard6"></td>
+					<td><input list="fulllist" name="enemyCard6"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard7" id="playerCard7"></td>
+					<td><input list="fulllist" name="enemyCard7"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard8" id="playerCard8"></td>
+					<td><input list="fulllist" name="enemyCard8"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard9" id="playerCard9"></td>
+					<td><input list="fulllist" name="enemyCard9"></td>
+ 				</tr>
+				<tr>
+					<td><input list="collectionlist" name="playerCard10" id="playerCard10"></td>
+					<td><input list="fulllist" name="enemyCard10"></td>
+ 				</tr>
+				<tr>
+					<td><input type="button" name="saveDEckPlayerbutton" onClick="saveDeck(this.form,0,Cardlist)" value ="Validate and save Deck"></td>
+					<td><input type="button" name="saveDeckEnemybutton" onClick="saveDeck(this.form,1,Cardlist)" value ="Validate and save deck"></td>
+				</tr>
+				<tr>
+					<td><input type="button" name="loadDEckPlayerbutton" onClick="loadDeck(this.form,0,Cardlist)" value ="load this player Deck"></td>
+					<td><input type="button" name="loadDeckEnemybutton" onClick="loadDeck(this.form,1,Cardlist)" value ="load this enemy deck"></td>
+				</tr>
+				<tr>
+					<td>Attempts: <input type="number" name="tries" value ="1" size="4"></td>
+					<td><input type="button" name="sim" onClick="winrate(this.form)" value ="Run simulation(s)"></td>
+				</tr>
+					<datalist id="collectionlist"></datalist>
+					<script type="text/javascript">
+					if (localStorage.collection)
+					{
+						var options = "";
+						var collectionArray = localStorage.collection.split(",");
+						for (var i=0 ; i< collectionArray.length ; i++)
+						{
+							options += '<option value="'+Cardlist[collectionArray[i]].CardName +'">';
+						}
+						document.getElementById('collectionlist').innerHTML = options;
+					}
+					</script>
+					<datalist id="fulllist"></datalist>
+					<script type="text/javascript">
+						var options = "";
+						for (var i=0 ; i< Cardlist.length ; i++)
+						{
+							options += '<option value="'+Cardlist[i].CardName +'">';
+						}
+						document.getElementById('fulllist').innerHTML = options;
+					</script>
+					<datalist id="decklist"></datalist>
+					<script type="text/javascript">
+					var decknames ="";
+					for (var i=0 ; i< presetDecks.length ; i ++)
+					{
+						decknames += '<option value="'+ presetDecks[i][0] +'">';
+					}
+					if (localStorage.deckName)
+					{
+						var deckNameArray = localStorage.deckName.split(",");
+						for (var i=0 ; i< deckNameArray.length ; i++)
+						{
+							decknames += '<option value="'+deckNameArray[i] +'">';
+						}
+					}
+					document.getElementById('decklist').innerHTML = decknames;
+					</script>
+					<script type="text/javascript">
+					var mssg ="";
+					var sname ="";
+					var commName =""
+					var realName ="";
+				for (var j=1; j<4 ; j++)
+				{
+					mssg+= 'Skill'+j+': <select name="skill'+j+'"><option value="NA">Not important</option>';
+					for (var i=0; i<skillList.length ; i++)
+					{
+						sname = skillList[i];
+						commName= sname;
+						realName ="";
+						if (sname.charAt(1) == "_")
+						{
+							realName += "Enhance ";
+							sname = sname. substring(2);
+						}
+						if (sname.charAt(sname.length - 2) == "A")
+						{
+							realName += sname.substring(0,sname.length - 3) + " All Faction";
+						
+						}
+						else if (sname.charAt(sname.length - 1) == "A")
+						{
+							realName += sname.substring(0,sname.length - 2) + " All";
+						}
+						else if (sname.charAt(sname.length - 1) == "F")
+						{
+							realName += sname.substring(0,sname.length - 2) + " Faction";
+						}
+						else
+						{
+							realName += sname;
+						}
+						mssg += '<option value="'+commName+'">'+realName+'</option>';
+					}
+					mssg += '</select><br>';
+				}
+					document.getElementById('skillList').innerHTML=mssg;
+					</script>
+					
+				</table>
+				<select name="battleskill">
+				<option value="NA">Not in a battle</option>
+				<option value="E_Heal 1">Enhance heal 1</option>
+				<option value="E_Heal 2">Enhance heal 2</option>
+				<option value="E_Heal 3">Enhance heal 3</option>
+				<option value="E_Leech_A 1">Enhance Leech 1</option>
+				<option value="E_Leech_A 2">Enhance Leech 2</option>
+				<option value="E_Leech_A 3">Enhance Leech 3</option>
+				<option value="E_Poison_A 1">Enhance Poison 1</option>
+				<option value="E_Poison_A 2">Enhance Poison 2</option>
+				<option value="E_Poison_A 3">Enhance Poison 3</option>
+				</select>
+				
+				</form>
+			<script type="text/javascript">
+			document.write('<div><label><input type="checkbox" id="ordering" defaultChecked=false>Play your cards in this order.</label></div>');
+			document.getElementById('ordering').checked = false;
+			document.getElementById('ordering').onclick = function () { 
+			order(); 
+			} 
+			</script>
+ 
+		</div>
+		<div id="left4">
+		<h2>Optimisation</h2>
+		<button onclick="showoptimisation(Cardlist)">Check optimisation selection / Hide it</button>
+			<div id="optim"></div>
+			<form name="runoptim" action="" autocomplete="on">
+ 			Min card in deck: <input number="decksizeMin" name="minSize"> <br>Number of tries for Sim test<input number="simnum" name="simnum"><br>
+
+  			<input type="button" name="runOptimbutton" onClick="runoptimisation(this.form, Cardlist)" value ="Run optimisation test with selection">
+			</form>
+
+		</div>
+		</div>
+
+
+
+	</body>
+</html>
