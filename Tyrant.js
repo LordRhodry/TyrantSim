@@ -1,5 +1,5 @@
 var usedCardlist = [];
-var skillList =["Enfeeble","Enfeeble_A","Heal","Heal_F","Heal_A","Heal_AF","Protect","Protect_F","Protect_A","Protect_AF","Rally","Rally_F","Rally_A","Rally_AF","Siege","Siege_A","Strike","Strike_A","Weaken","Weaken_A","Jam","Pierce","Berzerk","Leech","Poison","Evade","Armor","Counter","Wall","E_Leech","E_Leech_A","E_Poison","E_Poison_A","E_Counter","E_Counter_A","E_Armor","E_Armor_A","E_Berzerk","E_Berzerk_A","E_Evade","E_Evade_A"];
+var skillList =["Enfeeble","Enfeeble_A","Heal","Heal_F","Heal_A","Heal_AF","Protect","Protect_F","Protect_A","Protect_AF","Rally","Rally_F","Rally_A","Rally_AF","Siege","Siege_A","Strike","Strike_A","Weaken","Weaken_A","Jam","Pierce","Berzerk","Leech","Poison","Evade","Armor","Counter","Wall","Inhibit","E_Leech","E_Leech_A","E_Poison","E_Poison_A","E_Counter","E_Counter_A","E_Armor","E_Armor_A","E_Berzerk","E_Berzerk_A","E_Evade","E_Evade_A"];
 var activSkill =["Enfeeble","Enfeeble_A","Heal","Heal_F","Heal_A","Heal_AF","Protect","Protect_F","Protect_A","Protect_AF","Rally","Rally_F","Rally_A","Rally_AF","Siege","Siege_A","Strike","Strike_A","Weaken","Weaken_A","Jam","E_Leech","E_Leech_A","E_Poison","E_Poison_A","E_Counter","E_Counter_A","E_Armor","E_Armor_A","E_Berzerk","E_Berzerk_A","E_Evade","E_Evade_A"];
 
 var presetDecks = [["Sample Deck",1944,1358,854,1731,1996,407,784],["Razogoth",1484,1782,1508,508,388,1508,299,796,1141,1215,1221],["DinosaurTS",66,1358,1722,680,2128],["Agmeus 10",2481,2487,2487,1938,1528,956,892,1427,42,1200,1518],["Vargas 10",2499,2493,2493,2487,42,1263,121,910,956,1876,11],["GDR-5000 10",2505,2493,2487,2511,2511,1329,2517,121,1263,892,1200]];
@@ -11,6 +11,7 @@ var struct = [[],[]];
 var commander = [];
 var inDeck = [[],[]];
 var ordered = false;
+var fortress =[[-1,-1],[-1,-1]];
 var battle =0;
 var war_heal = 0;
 var batskillname ="";
@@ -212,6 +213,10 @@ function saveDeck ( form , owner, cardlist)
 						{
 							deckArray[i][j] = currentDeck[j];
 						}
+						else
+						{
+							deckArray[i][j] = -1;
+						}
 					}
 					localStorage.deck = deckArray.toString();
 				}
@@ -287,8 +292,15 @@ function loadDeck (form , owner, cardlist)
 					fieldname = fieldpre + pickcard;
 					if (isNumber(deckArray[i][pickcard+1]))
 					{
-						usedCardlist[deckArray[i][pickcard+1]] =cardlist[deckArray[i][pickcard+1]];
-						document.getElementsByName(fieldname).item(0).value = cardlist[deckArray[i][pickcard+1]].CardName;
+						if (deckArray[i][pickcard+1] == -1)
+						{
+							document.getElementsByName(fieldname).item(0).value = "";
+						}
+						else
+						{
+							usedCardlist[deckArray[i][pickcard+1]] =cardlist[deckArray[i][pickcard+1]];
+							document.getElementsByName(fieldname).item(0).value = cardlist[deckArray[i][pickcard+1]].CardName;
+						}
 					}
 					else
 					{
@@ -440,11 +452,12 @@ function grabDeck (form , owner, cardlist)
 		return grabbedDeck;
 	}
 }
-function winrate(form , numberoftest, noshow)
+function winrate(form ,cardlist, numberoftest, noshow)
 {
 	var trials = 0;
 	var victories = 0;
 	var batskill ="";
+	var fortind=-1;
 	
 	if (numberoftest == null)
 	{
@@ -478,14 +491,57 @@ function winrate(form , numberoftest, noshow)
 				batskillname = indic;
 			}
 		}
-
+		if (form.fortress_p1.value == "NA")
+		{
+			fortress[0][0]=-1;
+		}
+		else
+		{
+			fortind = form.fortress_p1.value;
+			usedCardlist[fortind]=cardlist[fortind];
+			fortress[0][0] = parseInt(fortind);
+		
+		}
+		if (form.fortress_p2.value == "NA")
+		{
+			fortress[0][1]=-1;
+		}
+		else
+		{
+			fortind = form.fortress_p2.value;
+			usedCardlist[fortind]=cardlist[fortind];
+			fortress[0][1] = parseInt(fortind);
+		}
+		if (form.fortress_o1.value == "NA")
+		{
+			fortress[1][0]=-1;
+		}
+		else
+		{
+			fortind = form.fortress_o1.value;
+			usedCardlist[fortind]=cardlist[fortind];
+			fortress[1][0] = parseInt(fortind);
+		}
+		if (form.fortress_o2.value == "NA")
+		{
+			fortress[1][1]=-1;
+		}
+		else
+		{
+			fortind = form.fortress_o2.value;
+			usedCardlist[fortind]=cardlist[fortind];
+			fortress[1][1] = parseInt(fortind);
+		}
 
 	}
 	else
 	{
 		trials = numberoftest;
 	}
+	
 
+	
+	
 	if (( currentDecks[0].length>0 )&&(currentDecks[1].length>0))
 	{
 		for (var n=0; n< trials ; n++)
@@ -538,8 +594,34 @@ function simulation(form)
 	{
 		inDeck = [fisherYates(playerDeck.slice(2)), fisherYates(enemyDeck.slice(2))];
 	}
-
-	
+	if (fortress[0][0] == -1)
+	{
+	}
+	else
+	{
+		play(0,fortress[0][0]);
+	}
+	if (fortress[0][1] == -1)
+	{
+	}
+	else
+	{
+		play(0,fortress[0][1]);
+	}
+	if (fortress[1][0] == -1)
+	{
+	}
+	else
+	{
+		play(1,fortress[1][0]);
+	}
+	if (fortress[1][1] == -1)
+	{
+	}
+	else
+	{
+		play(1,fortress[1][1]);
+	}	
 	
 	if (battle == 0)
 	{
@@ -736,7 +818,13 @@ function play ( who, card )
 	}
 	else
 	{
-		assault[who][assault[who].length] = {"attack":usedCardlist[card].Attack,"health":usedCardlist[card].Health, "skills":cardskill(card),"poisoned":0,"enfeebled":0,"protect":0,"evade":usedCardlist[card].Evade,"rank":card,"currentHealth":usedCardlist[card].Health,"faction":usedCardlist[card].Faction,"armor":usedCardlist[card].Armor,"berzerk":usedCardlist[card].Berzerk,"leech":usedCardlist[card].Leech,"poison":usedCardlist[card].Poison,"pierce":usedCardlist[card].Pierce,"counter":usedCardlist[card].Counter,"berzerked":0,"jamed":0,"jamcount":0,"delayed":usedCardlist[card].Delay};
+		var ind = assault[who].length;
+		assault[who][ind] = {"attack":usedCardlist[card].Attack,"health":usedCardlist[card].Health, "skills":cardskill(card),"poisoned":0,"enfeebled":0,"protect":0,"evade":usedCardlist[card].Evade,"rank":card,"currentHealth":usedCardlist[card].Health,"faction":usedCardlist[card].Faction,"armor":usedCardlist[card].Armor,"berzerk":usedCardlist[card].Berzerk,"leech":usedCardlist[card].Leech,"poison":usedCardlist[card].Poison,"pierce":usedCardlist[card].Pierce,"counter":usedCardlist[card].Counter,"berzerked":0,"jamed":0,"jamcount":0,"delayed":usedCardlist[card].Delay,"inhibit":0,"inhibited":0};
+		if(usedCardlist[card].Inhibit != null)
+		{
+			assault[who][ind].inhibit = usedCardlist[card].Inhibit;
+			//console.log(usedCardlist[card].CardName + " has inhibit" + usedCardlist[card].Inhibit);
+		}
 	}
 }
 
@@ -775,10 +863,11 @@ function playturn ( who )
 	cleanup(who);
 }
 
-function activate (who, skillname, skilllevel , activ, faction, type )
+function activate (who, skillname, skillevel , activ, faction, type )
 {
 // numbers are position in activSkill array
 	var enh_heal = 0;
+	var skilllevel =parseInt(skillevel);
 	if (type == 2)
 	{
 		enh_heal = war_heal;
@@ -827,7 +916,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].currentHealth = Math.min(assault[who][valid[rand]].currentHealth+skilllevel+enh_heal,assault[who][valid[rand]].health);
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].currentHealth = Math.min(assault[who][valid[rand]].currentHealth+skilllevel+enh_heal,assault[who][valid[rand]].health);
+			}
 		}
 		return;
 	case 3:
@@ -844,7 +940,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].currentHealth = Math.min(assault[who][valid[rand]].currentHealth+skilllevel+enh_heal,assault[who][valid[rand]].health);
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].currentHealth = Math.min(assault[who][valid[rand]].currentHealth+skilllevel+enh_heal,assault[who][valid[rand]].health);
+			}
 		}
 		return;
 	case 4:
@@ -852,7 +955,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		{
 			for (var i=0 ; i< assault[who].length ; i++)
 			{
-				assault[who][i].currentHealth = Math.min(assault[who][i].currentHealth+skilllevel+enh_heal,assault[who][i].health);
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{
+					assault[who][i].currentHealth = Math.min(assault[who][i].currentHealth+skilllevel+enh_heal,assault[who][i].health);
+				}
 			}
 		}
 		return;
@@ -863,7 +973,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 			{
 				if(assault[who][i].faction == faction)
 				{
-					assault[who][i].currentHealth = Math.min(assault[who][i].currentHealth+skilllevel+enh_heal,assault[who][i].health);
+					if (assault[who][i].inhibited > 0)
+					{
+						assault[who][i].inhibited --;
+					}
+					else
+					{
+						assault[who][i].currentHealth = Math.min(assault[who][i].currentHealth+skilllevel+enh_heal,assault[who][i].health);
+					}
 				}
 			}
 		}
@@ -871,7 +988,15 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 	case 6:
 		if (assault[who].length > 0)
 		{
-			assault[who][Math.floor(Math.random()*assault[who].length)].protect += skilllevel;
+			var rand = Math.floor(Math.random()*assault[who].length);
+			if (assault[who][rand].inhibited > 0)
+			{
+				assault[who][rand].inhibited --;
+			}
+			else
+			{
+				assault[who][rand].protect += skilllevel;
+			}
 		}
 		return;
 	case 7:
@@ -886,7 +1011,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].protect += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].protect += skilllevel;
+			}
 		}
 		return;
 	case 8:
@@ -894,7 +1026,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		{
 			for (var i=0 ; i< assault[who].length ; i++)
 			{
-				assault[who][i].protect += skilllevel;
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{
+					assault[who][i].protect += skilllevel;
+				}
 			}
 		}
 		return;
@@ -903,7 +1042,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		{
 			if (assault[who][i].faction == faction)
 			{
-				assault[who][i].protect += skilllevel;
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{
+					assault[who][i].protect += skilllevel;
+				}
 			}
 		}
 		return;
@@ -919,7 +1065,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].attack += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].attack += skilllevel;
+			}
 		}		
 		return;
 	case 11:
@@ -935,7 +1088,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].attack += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].attack += skilllevel;
+			}
 		}
 		return;
 	case 12:
@@ -943,7 +1103,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		{		
 			for (var i=activ ; i< assault[who].length ; i++)
 			{
-				assault[who][i].attack += skilllevel;
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{
+					assault[who][i].attack += skilllevel;
+				}
 			}
 		}
 		return;
@@ -952,7 +1119,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		{
 			if ((assault[who][i].faction == faction)&& (assault[who][i].delayed == 0))
 			{
-				assault[who][i].attack += skilllevel;
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{
+					assault[who][i].attack += skilllevel;
+				}
 			}
 		}
 		return;
@@ -1135,7 +1309,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].leech += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].leech += skilllevel;
+			}
 		}		
 		return;
 	case 22:
@@ -1145,7 +1326,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 			{
 				if (assault[who][i].leech > 0 )
 				{			
-					assault[who][i].leech += skilllevel;
+					if (assault[who][i].inhibited > 0)
+					{
+						assault[who][i].inhibited --;
+					}
+					else
+					{
+						assault[who][i].leech += skilllevel;
+					}
 				}
 			}
 		}
@@ -1162,7 +1350,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].poison += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].poison += skilllevel;
+			}
 		}		
 		return;
 	case 24:
@@ -1171,8 +1366,15 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 			for (var i=activ ; i< assault[who].length ; i++)
 			{
 				if (assault[who][i].poison > 0 )
-				{			
-					assault[who][i].poison += skilllevel;
+				{	
+					if (assault[who][i].inhibited > 0)
+					{
+						assault[who][i].inhibited --;
+					}
+					else
+					{				
+						assault[who][i].poison += skilllevel;
+					}
 				}
 			}
 		}
@@ -1189,7 +1391,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].counter += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].counter += skilllevel;
+			}
 		}		
 		return;
 	case 26:
@@ -1197,7 +1406,14 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		{
 			if (assault[who][i].counter > 0 )
 			{			
-				assault[who][i].counter += skilllevel;
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{				
+					assault[who][i].counter += skilllevel;
+				}
 			}
 		}
 		return;
@@ -1213,15 +1429,29 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].armor += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].armor += skilllevel;
+			}
 		}		
 		return;
 	case 28:
 		for (var i=activ ; i< assault[who].length ; i++)
 		{
 			if (assault[who][i].armor > 0 )
-			{			
-				assault[who][i].armor += skilllevel;
+			{
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{			
+					assault[who][i].armor += skilllevel;
+				}	
 			}
 		}
 		return;
@@ -1237,15 +1467,29 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].berzerk += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].berzerk += skilllevel;
+			}
 		}
 		return;
 	case 30:
 		for (var i=activ ; i< assault[who].length ; i++)
 		{
 			if (assault[who][i].berzerk > 0 )
-			{			
-				assault[who][i].berzerk += skilllevel;
+			{
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{			
+					assault[who][i].berzerk += skilllevel;
+				}
 			}
 		}
 		return;
@@ -1261,15 +1505,29 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 		if (valid.length > 0) 
 		{
 			var rand = Math.floor(Math.random()*valid.length);
-			assault[who][valid[rand]].evade += skilllevel;
+			if (assault[who][valid[rand]].inhibited > 0)
+			{
+				assault[who][valid[rand]].inhibited --;
+			}
+			else
+			{
+				assault[who][valid[rand]].evade += skilllevel;
+			}
 		}
 		return;
 	case 32:
 		for (var i=activ ; i< assault[who].length ; i++)
 		{
 			if (assault[who][i].evade > 0 )
-			{			
-				assault[who][i].evade += skilllevel;
+			{	
+				if (assault[who][i].inhibited > 0)
+				{
+					assault[who][i].inhibited --;
+				}
+				else
+				{			
+					assault[who][i].evade += skilllevel;
+				}
 			}
 		}
 		return;
@@ -1281,7 +1539,7 @@ function activate (who, skillname, skilllevel , activ, faction, type )
 function attacks ( who , number )
 {
 	var damage = assault[who][number].attack;
-	//alert ( damage);
+	//console.log(usedCardlist[assault[who][number].rank].CardName + " has an attack value of "+ assault[who][number].attack);
 	var wallID = -1;
 	for (var i=0 ; i< struct[1-who].length ; i++)
 	{
@@ -1304,9 +1562,13 @@ function attacks ( who , number )
 			{
 				assault[1-who][number].currentHealth -= damage;
 				assault[1-who][number].poisoned = Math.max(assault[1-who][number].poisoned , assault[who][number].poison);
+				assault[1-who][number].inhibited += assault[who][number].inhibit;
 				assault[who][number].berzerked += assault[who][number].berzerk;
 				assault[who][number].currentHealth -= Math.max(0,assault[1-who][number].counter-assault[who][number].protect);
-				assault[who][number].currentHealth = Math.min(assault[who][number].health,assault[who][number].currentHealth + Math.min(damage,assault[who][number].leech));
+				if (assault[who][number].currentHealth > 0)
+				{
+					assault[who][number].currentHealth = Math.min(assault[who][number].health,assault[who][number].currentHealth + Math.min(damage,assault[who][number].leech));
+				}
 			}
 		}
 		else if ( wallID >= 0)
@@ -1401,6 +1663,7 @@ function cleanup (who)
 	{
 		if ( assault[1-who][ind].currentHealth <1)
 		{		
+			//console.log("erase " + usedCardlist[assault[1-who][ind].rank].CardName +  " whose health is "+assault[1-who][ind].currentHealth );
 			assault[1-who].splice(ind,1);
 		}
 		else
@@ -1430,6 +1693,7 @@ function cleanup (who)
 		assault[who][i].berzerk = usedCardlist[rank].Berzerk;
 		assault[who][i]. evade = usedCardlist[rank].Evade;
 		assault[who][i].jamed = 0;
+		assault[who][i].inhibited =0;
 	}
 
 // reduce delay value by one.
@@ -1648,14 +1912,14 @@ function runoptimisation (form , cardlist)
 					currentDecks[0]=temparray.concat(alldecks[j]);
 					
 					
-					console.log("current deck readied " + j);
+					//console.log("current deck readied " + j);
 					if ((currentDecks[0] < 2)||(currentDecks[1]<2))
 					{
 						alert("invalid decks");
 						return;
 					}
-					score = winrate(form,numberoftest , true);
-					console.log(" score " + score);
+					score = winrate(form,[],numberoftest , true);
+					//console.log(" score " + score);
 					if (score > optimScore)
 					{
 						optimDeck = currentDecks[0];
@@ -1774,7 +2038,7 @@ function CleanDeckList(cardlist)
 		localStorage.removeItem('deckName');
 		alert ("deck saved erased");
 		var decknames ="";
-		for (var i=0 ; i< presetDecks.length ; i ++)
+for (var i=0 ; i< presetDecks.length ; i ++)
 		{
 			decknames += '<option value="'+ presetDecks[i][0] +'">';
 		}

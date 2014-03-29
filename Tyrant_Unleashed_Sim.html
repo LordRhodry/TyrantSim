@@ -69,6 +69,21 @@
 <script src="Tyrantcardlist.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="jquery.sortable.js"></script>
+<script src="jquery-1.11.0.js"></script>
+<script type="text/javascript">
+	 if (localStorage.updatedCardlist)
+	 {
+		var cardlistprep = localStorage.updatedCardlist.split("}");
+		cardlistprep[0] += "}"; 
+		Cardlist[Cardlist.length] = parseJSON(cardlistprep[0]);
+		for (var i=1; i < cardlistprep.length ; i++)
+		{
+			cardlistprep[i] = cardlistprep[i].substring(1) + "}";
+			Cardlist[Cardlist.length]=parseJSON(cardlistprep[i]);
+		}
+	 }
+	
+</script>
 
 	</head>
 	<body>
@@ -79,6 +94,7 @@
 		<div id="block">
 			<div id="left1">
 			<h2> Your Collection </h2>
+			<button onclick="updatelist(Cardlist)">Update Card list</button> (this operation could be long)
 			<form name="addCard" action="" autocomplete="on">
  			Card name:<input list="fulllist" name="fname">
 
@@ -215,8 +231,16 @@
 					<td><input type="button" name="loadDeckEnemybutton" onClick="loadDeck(this.form,1,Cardlist)" value ="load this enemy deck"></td>
 				</tr>
 				<tr>
+					<td><div id="fortress-player-1"></div></td>
+					<td><div id="fortress-opp-1"></div></td>
+				</tr>
+				<tr>
+					<td><div id="fortress-player-2"></div></td>
+					<td><div id="fortress-opp-2"></div></td>
+				</tr>
+				<tr>
 					<td>Attempts: <input type="number" name="tries" value ="1" size="4"></td>
-					<td><input type="button" name="sim" onClick="winrate(this.form)" value ="Run simulation(s)"></td>
+					<td><input type="button" name="sim" onClick="winrate(this.form , Cardlist)" value ="Run simulation(s)"></td>
 				</tr>
 					<datalist id="collectionlist"></datalist>
 					<script type="text/javascript">
@@ -297,6 +321,30 @@
 					mssg += '</select><br>';
 				}
 					document.getElementById('skillList').innerHTML=mssg;
+					</script>
+					<script type="text/javascript">
+					var mssg =["Fortress1 player:<select name='fortress_p1'><option value='NA'>No Fortress card</option>","Fortress2 player:<select name='fortress_p2'><option value='NA'>No Fortress card</option>","Fortress1 opponent:<select name='fortress_o1'><option value='NA'>No Fortress card</option>","Fortress2 opponent:<select name='fortress_o2'><option value='NA'>No Fortress card</option>"];
+					var realName ="";
+					for (var i=0; i<Cardlist.length ; i++)
+					{
+						if (Cardlist[i].Set =="Fortress")
+						{
+							var realName = Cardlist[i].CardName;
+							for (var j=0; j<4 ; j++)
+							{
+								mssg[j] += '<option value="'+i+'">'+realName+'</option>';
+							}
+						}
+					}
+					for (var j=0; j<4 ; j++)
+					{
+						mssg[j] += '</select><br>';
+					}
+				
+					document.getElementById('fortress-player-1').innerHTML=mssg[0];
+					document.getElementById('fortress-player-2').innerHTML=mssg[1];
+					document.getElementById('fortress-opp-1').innerHTML=mssg[2];
+					document.getElementById('fortress-opp-2').innerHTML=mssg[3];
 					</script>
 					
 				</table>
