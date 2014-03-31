@@ -65,7 +65,7 @@
 </style>
 
 
-<script src="Tyrant.js"></script>
+<script src="Tyrant3.js"></script>
 <script src="Tyrantcardlist.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="jquery.sortable.js"></script>
@@ -75,12 +75,16 @@
 	 {
 		var cardlistprep = localStorage.updatedCardlist.split("}");
 		cardlistprep[0] += "}"; 
-		Cardlist[Cardlist.length] = parseJSON(cardlistprep[0]);
-		for (var i=1; i < cardlistprep.length ; i++)
+		console.log(cardlistprep[0]);
+		Cardlist[Cardlist.length] = JSON.parse(cardlistprep[0]);
+		for (var i=1; i < cardlistprep.length -1 ; i++)
 		{
 			cardlistprep[i] = cardlistprep[i].substring(1) + "}";
-			Cardlist[Cardlist.length]=parseJSON(cardlistprep[i]);
+			console.log(cardlistprep[i]);
+			Cardlist[Cardlist.length]=JSON.parse(cardlistprep[i]);
 		}
+		//cardlistprep[cardlistprep.length-1] = cardlistprep[cardlistprep.length-1].substring(1);
+		//Cardlist[Cardlist.length]=JSON.parse(cardlistprep[cardlistprep.length-1]);
 	 }
 	
 </script>
@@ -159,6 +163,7 @@
 		
 		<div id ="block2">
 			<div id="left3" >
+			<button onclick="updatedecks(Cardlist)">Update  Mission decks list</button> (this operation could be long)
 			<h2> Simulation </h2>
 			<form name="EnterDecks" action="" autocomplete="on">
 			<table border=1 style="width:100%">

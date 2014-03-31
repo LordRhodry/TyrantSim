@@ -491,47 +491,7 @@ function winrate(form ,cardlist, numberoftest, noshow)
 				batskillname = indic;
 			}
 		}
-		if (form.fortress_p1.value == "NA")
-		{
-			fortress[0][0]=-1;
-		}
-		else
-		{
-			fortind = form.fortress_p1.value;
-			usedCardlist[fortind]=cardlist[fortind];
-			fortress[0][0] = parseInt(fortind);
-		
-		}
-		if (form.fortress_p2.value == "NA")
-		{
-			fortress[0][1]=-1;
-		}
-		else
-		{
-			fortind = form.fortress_p2.value;
-			usedCardlist[fortind]=cardlist[fortind];
-			fortress[0][1] = parseInt(fortind);
-		}
-		if (form.fortress_o1.value == "NA")
-		{
-			fortress[1][0]=-1;
-		}
-		else
-		{
-			fortind = form.fortress_o1.value;
-			usedCardlist[fortind]=cardlist[fortind];
-			fortress[1][0] = parseInt(fortind);
-		}
-		if (form.fortress_o2.value == "NA")
-		{
-			fortress[1][1]=-1;
-		}
-		else
-		{
-			fortind = form.fortress_o2.value;
-			usedCardlist[fortind]=cardlist[fortind];
-			fortress[1][1] = parseInt(fortind);
-		}
+
 
 	}
 	else
@@ -539,7 +499,47 @@ function winrate(form ,cardlist, numberoftest, noshow)
 		trials = numberoftest;
 	}
 	
-
+	if (form.fortress_p1.value == "NA")
+	{
+		fortress[0][0]=-1;
+	}
+	else
+	{
+		fortind = form.fortress_p1.value;
+		usedCardlist[fortind]=cardlist[fortind];
+		fortress[0][0] = parseInt(fortind);
+		
+	}
+	if (form.fortress_p2.value == "NA")
+	{
+		fortress[0][1]=-1;
+	}
+	else
+	{
+		fortind = form.fortress_p2.value;
+		usedCardlist[fortind]=cardlist[fortind];
+		fortress[0][1] = parseInt(fortind);
+	}
+	if (form.fortress_o1.value == "NA")
+	{
+		fortress[1][0]=-1;
+	}
+	else
+	{
+		fortind = form.fortress_o1.value;
+		usedCardlist[fortind]=cardlist[fortind];
+		fortress[1][0] = parseInt(fortind);
+	}
+	if (form.fortress_o2.value == "NA")
+	{
+		fortress[1][1]=-1;
+	}
+	else
+	{
+		fortind = form.fortress_o2.value;
+		usedCardlist[fortind]=cardlist[fortind];
+		fortress[1][1] = parseInt(fortind);
+	}
 	
 	
 	if (( currentDecks[0].length>0 )&&(currentDecks[1].length>0))
@@ -1918,7 +1918,7 @@ function runoptimisation (form , cardlist)
 						alert("invalid decks");
 						return;
 					}
-					score = winrate(form,[],numberoftest , true);
+					score = winrate(form,numberoftest , true);
 					//console.log(" score " + score);
 					if (score > optimScore)
 					{
@@ -2392,6 +2392,5 @@ function findMaxlevel( pos , cardlist)
 	ind --;
 	return ind
 }
-
 
 
