@@ -2290,8 +2290,10 @@ function updatelist(cardlist)
 				cardtoadd[i] = JSON.stringify(cardtoadd[i]);
 			}
 			localStorage.updatedCardlist = cardtoadd.toString();
-			console.log(localStorage.updatedCardlist);
+			
+			//console.log(localStorage.updatedCardlist);
 		}
+		alert("Cardlist updated");
 
 	};
 
@@ -2358,6 +2360,30 @@ function updatedecks(cardlist)
 					deckArray[deckArray.length] = findMaxlevel(parseInt(ids[parseInt($(this).text())]),cardlist);
 				});
 			}
+			else
+			{
+				deckNames[position] = nameofdeck;
+				tdeckArray = makeDeckArray(deckArray)
+				tdeckArray[position]= [];
+				tdeckArray[position][0]=$(this).find("name").text();
+				tdeckArray[position][1] = findMaxlevel(parseInt(ids[parseInt($(this).find("commander").text())]),cardlist);
+			
+				var deck = $(this).find("deck");
+				$(deck).find("card").each(function()
+				{
+					tdeckArray[position][tdeckArray[position].length] = findMaxlevel(parseInt(ids[parseInt($(this).text())]),cardlist);
+				});
+				deckArray=[];
+				var position = 0;
+				for (i=0 ; i< tdeckArray.length ; i++)
+				{
+					for (j=0; j<tdeckArray[i].length;j++)
+					{
+						deckArray[position]=tdeckArray[i][j];
+						position ++;
+					}
+				}
+			}
 		});
 		//console.log(deckNames.toString());
 		//console.log(deckArray.toString());
@@ -2377,20 +2403,48 @@ function updatedecks(cardlist)
 			}
 		}
 		document.getElementById('decklist').innerHTML = decknames;
+		alert("Deck list updated");
 	};
 }
 
 function findMaxlevel( pos , cardlist)
 {
 	var cardname = cardlist[pos].CardName;
+	var found = -1;
 	var namelength = cardname.length;
-	var ind = pos +1;
-	while (cardlist[ind].CardName.substring(0,namelength) == cardname)
+	if (cardname.substring(namelength-4,namelength-1) == "Lv.")
 	{
-		ind ++;
+		namelength -= 5;
+		cardname = cardname.substring(0,namelength);
 	}
-	ind --;
-	return ind
+	var ind = [0,0,0];
+	var place = pos+1;
+	while ((found < 2)&&(place<cardlist.length))
+	{
+		if (cardlist[place].CardName == cardname + " Lv.3")
+		{
+			found ++;
+			ind[found] = place;
+			place ++;
+		}
+		else if(cardlist[place].CardName == cardname + " Lv.4")
+		{
+			found ++;
+			ind[found] = place;
+			place ++;
+		}
+		else if(cardlist[place].CardName == cardname + " Lv.6")
+		{
+			found ++;
+			ind[found] = place;
+			place ++;
+		}
+		else
+		{
+			place ++;
+		}
+	}
+	return ind[found];
 }
 
 
