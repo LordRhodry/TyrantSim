@@ -23,4 +23,14 @@ Since the project was started for my eyes only, the code probably lacks comment 
 
 ----
 
+To update new cards and decks from event :
+download cards.xml and missions.xml from :  
+http://mobile.tyrantonline.com/assets/cards.xml
+http://mobile.tyrantonline.com/assets/missions.xml
+open xmlparser.html with firefox (chrome does not work with this one)
+click update cards andcopy the output : paste the output in Tyrantcardlist2.js (replace content) ... check if it looks good.If it does save as Tyrantcardlist.js
+refresh xmlparser.html and click the update missions ...copy and paste the result in the tyrant.js file (replace the array : presetecks1 )
+Once all that done go to weebly.com , click edit , click design , click Edit html/css , click addfiles and add both tyrant.js and tyrantcardlist.js
+Done ( should take under 5 min total)
 
+-----------

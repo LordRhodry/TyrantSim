@@ -55,6 +55,11 @@
 
 				
 			}
+			#move
+			{
+				width:32px;
+				height: 30px;
+			}
 
 			.center
 			{
@@ -67,27 +72,24 @@
 
 <script src="Tyrant3.js"></script>
 <script src="Tyrantcardlist.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<link rel="stylesheet" href="jquery-ui.css">
+<script src="jquery.js"></script>
+<script src="jquery-ui.js"></script>
 <script src="jquery.sortable.js"></script>
-<script src="jquery-1.11.0.js"></script>
-<script type="text/javascript">
-	 if (localStorage.updatedCardlist)
-	 {
-		var cardlistprep = localStorage.updatedCardlist.split("}");
-		cardlistprep[0] += "}"; 
-		console.log(cardlistprep[0]);
-		Cardlist[Cardlist.length] = JSON.parse(cardlistprep[0]);
-		for (var i=1; i < cardlistprep.length -1 ; i++)
-		{
-			cardlistprep[i] = cardlistprep[i].substring(1) + "}";
-			console.log(cardlistprep[i]);
-			Cardlist[Cardlist.length]=JSON.parse(cardlistprep[i]);
-		}
-		//cardlistprep[cardlistprep.length-1] = cardlistprep[cardlistprep.length-1].substring(1);
-		//Cardlist[Cardlist.length]=JSON.parse(cardlistprep[cardlistprep.length-1]);
-	 }
-	
-</script>
+
+					<script type="text/javascript">
+
+						$(function() { 
+												var optionArray = [];
+						for (var i=0 ; i< Cardlist.length ; i++)
+						{
+							if (Cardlist[i])
+							{
+								optionArray[optionArray.length]= Cardlist[i].CardName;
+							}
+						}
+						$( ".fulllist" ).autocomplete({ 	source: optionArray }); });
+					</script>
 
 	</head>
 	<body>
@@ -95,12 +97,15 @@
 		<header class="center">
 			<img src="Tyrant_logo.png" >
 		</header>
+	
 		<div id="block">
 			<div id="left1">
 			<h2> Your Collection </h2>
 			<button onclick="updatelist(Cardlist)">Update Card list</button> (this operation could be long)
 			<form name="addCard" action="" autocomplete="on">
- 			Card name:<input list="fulllist" name="fname">
+ 			<div class="ui-widget">
+			Card name:<input class="fulllist" name="fname">
+			</div>
 
   			<input type="button" name="addCardbutton" onClick="AddCollection(this.form, Cardlist)" value ="Add Card to Collection">
 			</form>
@@ -116,23 +121,26 @@
 					{
 						if (localStorage.collection)
 						{
-							var options = "";
+							var colArray = [];
 							var collectionArray = localStorage.collection.split(",");
 							for (var i=0 ; i< collectionArray.length ; i++)
 							{
-								options += '<option value="'+Cardlist[collectionArray[i]].CardName +'">';
+								colArray[colArray.length] = Cardlist[collectionArray[i]].CardName ;
 							}
-							document.getElementById('collectionlist').innerHTML = options;
+							$( ".collectionlist" ).autocomplete({ 	source: colArray });
 						}
 					}
 					else
 					{
-						var options = "";
+						var colArray = [];
 						for (var i=0 ; i< Cardlist.length ; i++)
 						{
-							options += '<option value="'+Cardlist[i].CardName +'">';
+							if (Cardlist[i])
+							{
+								colArray[colArray.length] = Cardlist[i].CardName ;
+							}
 						}
-						document.getElementById('collectionlist').innerHTML = options;
+						$( ".collectionlist" ).autocomplete({ 	source: colArray });
 					}					
 				}
 			</script>
@@ -172,60 +180,60 @@
 					<td>Name of your opponent deck</td>
  				</tr>
 				<tr>
-					<td><input list="decklist" name="playerDeck"></td>
-					<td><input list="decklist" name="enemyDeck"></td>
+					<td><input class="decklist" name="playerDeck"></td>
+					<td><input class="decklist" name="enemyDeck"></td>
  				</tr>
 				<tr>
 					<td>COMMANDER</td>
 					<td>COMMANDER</td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard0" id="playerCard0"></td>
-					<td><input list="fulllist" name="enemyCard0"></td>
+					<td><input class="collectionlist" name="playerCard0" id="playerCard0"></td>
+					<td><input class="fulllist" name="enemyCard0"></td>
  				</tr>
 				<tr>
 					<td>CARDS</td>
 					<td>CARDS</td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name ="playerCard1" id="playerCard1"></td>
-					<td><input list="fulllist" name="enemyCard1"></td>
+					<td><input class="collectionlist" name ="playerCard1" id="playerCard1"><input type="button"  style="display:inline; background: url(down.png) center;width:32px; height:32px;" onClick="moveCard(form, 0,1,2)"></td>
+					<td><input class="fulllist" name="enemyCard1"><input type="button" style="display:inline; background: url(down.png) center;width:32px; height:32px;"  onClick="moveCard(form,1,1,2)"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard2" id="playerCard2"></td>
-					<td><input list="fulllist" name="enemyCard2"></td>
+					<td><input class="collectionlist" name="playerCard2" id="playerCard2"><img onClick="moveCard(form,0,2,1)" src="up.png"><input type="image" onClick="moveCard(form,0,2,3)" src="down.png"></td>
+					<td><input class="fulllist" name="enemyCard2"><input type="image" onClick="moveCard(form,1,2,1)" src="up.png"><input type="image" onClick="moveCard(form,1,2,3)" src="down.png"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard3" id="playerCard3"></td>
-					<td><input list="fulllist" name="enemyCard3"></td>
+					<td><input class="collectionlist" name="playerCard3" id="playerCard3"></td>
+					<td><input class="fulllist" name="enemyCard3"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard4" id="playerCard4"></td>
-					<td><input list="fulllist" name="enemyCard4"></td>
+					<td><input class="collectionlist" name="playerCard4" id="playerCard4"></td>
+					<td><input class="fulllist" name="enemyCard4"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard5" id="playerCard5"></td>
-					<td><input list="fulllist" name="enemyCard5"></td>
+					<td><input class="collectionlist" name="playerCard5" id="playerCard5"></td>
+					<td><input class="fulllist" name="enemyCard5"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard6" id="playerCard6"></td>
-					<td><input list="fulllist" name="enemyCard6"></td>
+					<td><input class="collectionlist" name="playerCard6" id="playerCard6"></td>
+					<td><input class="fulllist" name="enemyCard6"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard7" id="playerCard7"></td>
-					<td><input list="fulllist" name="enemyCard7"></td>
+					<td><input class="collectionlist" name="playerCard7" id="playerCard7"></td>
+					<td><input class="fulllist" name="enemyCard7"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard8" id="playerCard8"></td>
-					<td><input list="fulllist" name="enemyCard8"></td>
+					<td><input class="collectionlist" name="playerCard8" id="playerCard8"></td>
+					<td><input class="fulllist" name="enemyCard8"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard9" id="playerCard9"></td>
-					<td><input list="fulllist" name="enemyCard9"></td>
+					<td><input class="collectionlist" name="playerCard9" id="playerCard9"></td>
+					<td><input class="fulllist" name="enemyCard9"></td>
  				</tr>
 				<tr>
-					<td><input list="collectionlist" name="playerCard10" id="playerCard10"></td>
-					<td><input list="fulllist" name="enemyCard10"></td>
+					<td><input class="collectionlist" name="playerCard10" id="playerCard10"></td>
+					<td><input class="fulllist" name="enemyCard10"></td>
  				</tr>
 				<tr>
 					<td><input type="button" name="saveDEckPlayerbutton" onClick="saveDeck(this.form,0,Cardlist)" value ="Validate and save Deck"></td>
@@ -245,46 +253,44 @@
 				</tr>
 				<tr>
 					<td>Attempts: <input type="number" name="tries" value ="1" size="4"></td>
-					<td><input type="button" name="sim" onClick="winrate(this.form , Cardlist)" value ="Run simulation(s)"></td>
+					<td><div id="numValue">Simulation progress: 0%</div><progress id="prog" value="0" max="100"></progress>
+					<input type="button" id="simBtn" name="sim" onClick="winrate(this.form , Cardlist)" value ="Run simulation(s)"></td>
 				</tr>
 					<datalist id="collectionlist"></datalist>
 					<script type="text/javascript">
 					if (localStorage.collection)
 					{
-						var options = "";
+						var colArray = [];
 						var collectionArray = localStorage.collection.split(",");
 						for (var i=0 ; i< collectionArray.length ; i++)
 						{
-							options += '<option value="'+Cardlist[collectionArray[i]].CardName +'">';
+							colArray[colArray.length] = Cardlist[collectionArray[i]].CardName ;
 						}
-						document.getElementById('collectionlist').innerHTML = options;
+						$( ".collectionlist" ).autocomplete({ 	source: colArray });
 					}
 					</script>
 					<datalist id="fulllist"></datalist>
-					<script type="text/javascript">
-						var options = "";
-						for (var i=0 ; i< Cardlist.length ; i++)
-						{
-							options += '<option value="'+Cardlist[i].CardName +'">';
-						}
-						document.getElementById('fulllist').innerHTML = options;
-					</script>
+
+
 					<datalist id="decklist"></datalist>
 					<script type="text/javascript">
-					var decknames ="";
+					var decknames =[];
 					for (var i=0 ; i< presetDecks.length ; i ++)
 					{
-						decknames += '<option value="'+ presetDecks[i][0] +'">';
+						if (presetDecks[i])
+						{
+							decknames[decknames.length] =  presetDecks[i][0] ;
+						}
 					}
 					if (localStorage.deckName)
 					{
 						var deckNameArray = localStorage.deckName.split(",");
 						for (var i=0 ; i< deckNameArray.length ; i++)
 						{
-							decknames += '<option value="'+deckNameArray[i] +'">';
+							decknames[decknames.length]= deckNameArray[i];
 						}
 					}
-					document.getElementById('decklist').innerHTML = decknames;
+					$( ".decklist" ).autocomplete({ 	source: decknames });
 					</script>
 					<script type="text/javascript">
 					var mssg ="";
@@ -332,6 +338,8 @@
 					var realName ="";
 					for (var i=0; i<Cardlist.length ; i++)
 					{
+					if (Cardlist[i])
+					{
 						if (Cardlist[i].Set =="Fortress")
 						{
 							var realName = Cardlist[i].CardName;
@@ -340,6 +348,7 @@
 								mssg[j] += '<option value="'+i+'">'+realName+'</option>';
 							}
 						}
+					}
 					}
 					for (var j=0; j<4 ; j++)
 					{
@@ -374,6 +383,15 @@
 			order(); 
 			} 
 			</script>
+			<script type="text/javascript">
+			document.write('<div><label><input type="checkbox" id="orderingopp" defaultChecked=false>Your opponent plays cards in this order.</label></div>');
+			document.getElementById('orderingopp').checked = false;
+			document.getElementById('orderingopp').onclick = function () { 
+			orderopp(); 
+			};
+			console.log(ordered);
+			</script>
+			
  
 		</div>
 		<div id="left4">

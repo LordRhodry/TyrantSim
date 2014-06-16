@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title> Tyrant Unleashed - xmlparser </title>
+		<style>
+ 			#block
+			{
+				width: 100%;
+   				color: navy;
+   				background-color: lightgrey;
+   				border: 2px solid darkblue;
+  				padding: 5px;
+				line-height:150%;
+				float:left;
+			}
+			#block2
+			{
+				width: 100%;
+   				color: navy;
+   				background-color: lightgrey;
+   				border: 2px solid darkblue;
+  				padding: 5px;
+				line-height:150%;
+				float:left;
+			}
+
+			
+</style>
+
+
+
+<script src="jquery-1.11.0.js"></script>
+<script src="parselists.js"></script>
+<script src="Tyrantcardlist2.js"></script>
+
+
+	</head>
+	<body>
+
+		<div id="block">
+			<h2> Card list </h2>
+			<button onclick="updatelist()">Update Card list</button> 
+			<div id="cardlist" style="background-color:grey"></div>
+		</div >
+		<div id="block2">
+			<h2> Mission list </h2>
+			<button onclick="updatedecks(Cardlist)">Update Mission list</button> 
+			<div id="decklist" style="background-color:grey"></div>
+		</div >
+	</body>
